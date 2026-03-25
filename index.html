@@ -106,7 +106,6 @@
             border-bottom: 2px solid rgba(255,255,255,0.1);
         }
         
-        /* Word Groups */
         .group-card {
             background: rgba(255,255,255,0.05);
             border-radius: 15px;
@@ -138,8 +137,8 @@
         
         .word-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 8px;
         }
         
         .word-item {
@@ -161,11 +160,6 @@
         .word-highlight {
             color: #fbbf24;
             font-weight: bold;
-        }
-        
-        .word-hint {
-            color: var(--gray);
-            font-size: 0.85em;
         }
         
         /* Test Section */
@@ -343,7 +337,6 @@
             transform: none;
         }
         
-        /* Results */
         .results {
             text-align: center;
             padding: 40px;
@@ -382,20 +375,6 @@
             background: var(--secondary);
         }
         
-        /* Tips Section */
-        .tip-card {
-            background: rgba(251, 191, 36, 0.1);
-            border-left: 4px solid #fbbf24;
-            padding: 15px 20px;
-            border-radius: 0 10px 10px 0;
-            margin-bottom: 15px;
-        }
-        
-        .tip-card h4 {
-            color: #fbbf24;
-            margin-bottom: 8px;
-        }
-        
         /* Mnemonics */
         .mnemonic {
             background: rgba(96, 165, 250, 0.1);
@@ -407,6 +386,20 @@
         .mnemonic-text {
             font-style: italic;
             color: #60a5fa;
+        }
+        
+        /* Tips */
+        .tip-card {
+            background: rgba(251, 191, 36, 0.1);
+            border-left: 4px solid #fbbf24;
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 15px;
+        }
+        
+        .tip-card h4 {
+            color: #fbbf24;
+            margin-bottom: 8px;
         }
         
         /* Responsive */
@@ -432,7 +425,6 @@
             <button class="nav-btn" onclick="showSection('tips')">💡 Tipy</button>
         </nav>
         
-        <!-- Learn Section -->
         <section id="learn" class="section active">
             <h2>Vyjmenovaná slova podle skupin</h2>
             <p style="color: var(--gray); margin-bottom: 20px;">
@@ -441,7 +433,6 @@
             <div id="wordGroups"></div>
         </section>
         
-        <!-- Test Section -->
         <section id="test" class="section">
             <div class="test-container">
                 <h2>Test znalostí</h2>
@@ -462,13 +453,11 @@
             </div>
         </section>
         
-        <!-- Mnemonics Section -->
         <section id="mnemonics" class="section">
             <h2>Paměťové triky a říkanky</h2>
             <div id="mnemonicsContent"></div>
         </section>
         
-        <!-- Tips Section -->
         <section id="tips" class="section">
             <h2>Tipy pro zapamatování</h2>
             <div class="tip-card">
@@ -481,190 +470,130 @@
             </div>
             <div class="tip-card">
                 <h4>3. Slova příbuzná</h4>
-                <p>Vyjmenovaná slova platí i pro všechny odvozené tvary: <em>bydlit → bydlí, bydliště, obyvatel</em></p>
+                <p>Vyjmenovaná slova platí i pro všechny odvozené tvary: <em>být → byl, bydlit → bydlí</em></p>
             </div>
             <div class="tip-card">
                 <h4>4. Předpony BE- a NE-</h4>
-                <p>Slova s předponami be- a ne- se řídí podle základového slova: <em>nebyl, nebýt, nebylina</em> (z BÝT)</p>
-            </div>
-            <div class="tip-card">
-                <h4>5. Cizí slova</h4>
-                <p>Cizí slova se píší podle výslovnosti: <em>bikiny, milión, policie</em> (s I)</p>
+                <p>Slova s předponami be- a ne- se řídí podle základového slova: <em>nebyl, nebýt</em> (z BÝT)</p>
             </div>
         </section>
     </div>
     
     <script>
-        // Vyjmenovaná slova - kompletní seznam
+        // Vyjmenovaná slova - PŘESNÝ SEZNAM Z OBRAZKU
         const vyjmenovanaSlova = {
             B: {
                 title: "Skupina B",
                 words: [
-                    { word: "být", hint: "existovat, nacházet se" },
-                    { word: "bydlit", hint: "žít někde" },
-                    { word: "obyvatel", hint: "člověk žijící na určitém místě" },
-                    { word: "obyčejný", hint: "běžný, ne zvláštní" },
-                    { word: "bylina", hint: "rostlina" },
-                    { word: "byl", hint: "minulý čas od BÝT" },
-                    { word: "nebyl", hint: "minulý čas od NEBÝT" },
-                    { word: "aby", hint: "spojka účelu" },
-                    { word: "abych", hint: "spojka + zájmeno" },
-                    { word: "abys", hint: "spojka + zájmeno" },
-                    { word: "abychom", hint: "spojka + zájmeno" },
-                    { word: "abyste", hint: "spojka + zájmeno" },
-                    { word: "dobyt", hint: "získat, přemoci" },
-                    { word: "dobytčí", hint: "týkající se dobytka" },
-                    { word: "obec", hint: "sídelní útvar, vesnice" },
-                    { word: "obecný", hint: "společný, obyčejný" },
-                    { word: "obyčej", hint: "zvyk, zvyklost" },
-                    { word: "obyčejně", hint: "obvykle, normálně" },
-                    { word: "obyvatelstvo", hint: "všichni obyvatelé" },
-                    { word: "zbyl", hint: "minulý čas od ZBÝT" },
-                    { word: "zbytek", hint: "to, co zbyde" },
-                    { word: "zbytečný", hint: "nadbytečný, zbytečně" },
-                    { word: "zbývat", hint: "zůstávat" },
-                    { word: "nabyt", hint: "získat, nabýt majetku" },
-                    { word: "nabytek", hint: "to, co bylo nabito" },
-                    { word: "dobyt", hint: "získat přemáháním" },
-                    { word: "dobytek", hint: "hospodářská zvířata" },
-                    { word: "dobytník", hint: "dobyvatel" }
+                    { word: "být" },
+                    { word: "bydlit" },
+                    { word: "obyvatel" },
+                    { word: "byt" },
+                    { word: "příbytek" },
+                    { word: "nábytek" },
+                    { word: "dobytek" },
+                    { word: "obyčej" },
+                    { word: "bystrý" },
+                    { word: "bylina" },
+                    { word: "kobyla" },
+                    { word: "býk" },
+                    { word: "Přibyslav" }
                 ]
             },
             L: {
                 title: "Skupina L",
                 words: [
-                    { word: "lyže", hint: "sportovní náčiní" },
-                    { word: "lyžovat", hint: "lyžařsky sportovat" },
-                    { word: "lyžař", hint: "osoba na lyžích" },
-                    { word: "lyžařský", hint: "týkající se lyžování" },
-                    { word: "lyže", hint: "množné číslo od lyže" },
-                    { word: "lyžovák", hint: "lyžařský výcvik" },
-                    { word: "pelyněk", hint: "rostlina, absint" },
-                    { word: "pelyňkový", hint: "z pelyněku" },
-                    { word: "polykat", hint: "spolknout" },
-                    { word: "polykání", hint: "spolknutí" },
-                    { word: "plyn", hint: "plynná látka" },
-                    { word: "plynovod", hint: "potrubí pro plyn" },
-                    { word: "plynový", hint: "z plynu" },
-                    { word: "plyš", hint: "sametová látka" },
-                    { word: "plyšový", hint: "z plyše" },
-                    { word: "plynulý", hint: "tekoucí, plynulý pohyb" },
-                    { word: "plynout", hint: "téci, plynule se pohybovat" },
-                    { word: "plynule", hint: "plynulým způsobem" },
-                    { word: "pelyněk", hint: "hořká bylinka" },
-                    { word: "lyže", hint: "množné číslo" }
+                    { word: "slyšet" },
+                    { word: "mýln" },
+                    { word: "blýskat se" },
+                    { word: "polýkat" },
+                    { word: "plynot" },
+                    { word: "plýtvat" },
+                    { word: "vzlykat" },
+                    { word: "lyš" },
+                    { word: "lýtko" },
+                    { word: "lyko" },
+                    { word: "lyže" },
+                    { word: "pelyněk" },
+                    { word: "plyš" }
                 ]
             },
             M: {
                 title: "Skupina M",
                 words: [
-                    { word: "mýtit", hint: "vybírat mýto" },
-                    { word: "mýtní", hint: "týkající se mýta" },
-                    { word: "mýto", hint: "poplatek za cestu" },
-                    { word: "mýtnice", hint: "výběrčí mýta" },
-                    { word: "mýt", hint: "vybírat mýto" },
-                    { word: "dmýchat", hint: "dmýchat křídla" },
-                    { word: "dmýchání", hint: "dmýchání křídel" },
-                    { word: "dmýchaný", hint: "vydmýchaný" },
-                    { word: "mýtit se", hint: "být mýcen" }
+                    { word: "my" },
+                    { word: "mýt" },
+                    { word: "mysli" },
+                    { word: "mýlit se" },
+                    { word: "hmyz" },
+                    { word: "myš" },
+                    { word: "hlemýžď" },
+                    { word: "mýtit" },
+                    { word: "zamykat" },
+                    { word: "smýkat" },
+                    { word: "dmychat" },
+                    { word: "chmýří" },
+                    { word: "Litomyšl" }
                 ]
             },
             P: {
                 title: "Skupina P",
                 words: [
-                    { word: "pýcha", hint: "hrdost, domýšlivost" },
-                    { word: "pýšit se", hint: "být hrdý na něco" },
-                    { word: "pycha", hint: "zpycha" },
-                    { word: "pykat", hint: "odpovídat za něco" },
-                    { word: "pyká", hint: "3. osoba od PYKAT" },
-                    { word: "pykal", hint: "minulý čas od PYKAT" },
-                    { word: "pýcha", hint: "pýcha na něco" },
-                    { word: "pyšný", hint: "hrdý, domýšlivý" },
-                    { word: "pyšně", hint: "hrdě, domýšlivě" },
-                    { word: "pyšnit se", hint: "být pyšný" },
-                    { word: "zpychat", hint: "zpychavit" },
-                    { word: "pýchat se", hint: "vyvyšovat se" },
-                    { word: "pýchavka", hint: "nejený člověk" }
+                    { word: "pýcha" },
+                    { word: "pytel" },
+                    { word: "pysk" },
+                    { word: "netopýr" },
+                    { word: "slepýš" },
+                    { word: "pyl" },
+                    { word: "kopyto" },
+                    { word: "klopýtat" },
+                    { word: "třpytit se" },
+                    { word: "zpytovat" },
+                    { word: "pykat" },
+                    { word: "pýr" },
+                    { word: "pýřit se" },
+                    { word: "čepýřit se" }
                 ]
             },
             S: {
                 title: "Skupina S",
                 words: [
-                    { word: "sýr", hint: "mléčný výrobek" },
-                    { word: "sýrový", hint: "ze sýra" },
-                    { word: "sýrárna", hint: "místo výroby sýra" },
-                    { word: "sýra", hint: "2. pád od sýr" },
-                    { word: "syrový", hint: "neupravený, syrový" },
-                    { word: "syrovátka", hint: "zbytková tekutina z výroby sýra" },
-                    { word: "syrenina", hint: "syrové maso" },
-                    { word: "rys", hint: "kočkovitá šelma" },
-                    { word: "rysa", hint: "2. pád od rys" },
-                    { word: "rysi", hint: "mladý rys" },
-                    { word: "rysý", hint: "čistý, upřímný" },
-                    { word: "rysovat", hint: "kreslit rysky" },
-                    { word: "ryska", hint: "mala čárka" },
-                    { word: "rysky", hint: "čárky" },
-                    { word: "sýkora", hint: "pták" },
-                    { word: "sýkorčí", hint: "ze sýkory" },
-                    { word: "sýkorka", hint: "sýkora" },
-                    { word: "sýkory", hint: "množné číslo" },
-                    { word: "sychravý", hint: "vlhký, chladný" },
-                    { word: "sychravo", hint: "vlhko, chladno" },
-                    { word: "sysel", hint: "hlodavec" },
-                    { word: "syslí", hint: "ze sysla" },
-                    { word: "sysel", hint: "zvíře" }
+                    { word: "syn" },
+                    { word: "sytý" },
+                    { word: "sýr" },
+                    { word: "syrový" },
+                    { word: "sychravý" },
+                    { word: "usychat" },
+                    { word: "sýkora" },
+                    { word: "syček" },
+                    { word: "sysel" },
+                    { word: "syčet" },
+                    { word: "sypat" }
                 ]
             },
             V: {
                 title: "Skupina V",
                 words: [
-                    { word: "vyset", hint: "vysedávat, vysednout" },
-                    { word: "vysedat", hint: "sedět venku" },
-                    { word: "vysoký", hint: "mající velkou výšku" },
-                    { word: "výška", hint: "rozměr výšky" },
-                    { word: "vyšší", hint: "ve vyšším patře" },
-                    { word: "nejvyšší", hint: "superlativ" },
-                    { word: "vysoko", hint: "do velké výšky" },
-                    { word: "výš", hint: "směrem nahoru" },
-                    { word: "vynést", hint: "nést ven" },
-                    { word: "vynášet", hint: "nést ven opakovaně" },
-                    { word: "vynikající", hint: "vynikající kvalita" },
-                    { word: "vyniknout", hint: "být lepší než ostatní" },
-                    { word: "vynik", hint: "vyniknutí" },
-                    { word: "vysoký", hint: "vysoký člověk" },
-                    { word: "vysovat", hint: "dělat věci vysoko" },
-                    { word: "vysoko", hint: "nahoru" },
-                    { word: "výška", hint: "měření výšky" },
-                    { word: "výš", hint: "výše" },
-                    { word: "vyšetřit", hint: "prošetřit" },
-                    { word: "vyšetřování", hint: "prošetřování" },
-                    { word: "vyšších", hint: "pád od vyšší" },
-                    { word: "vyznat", hint: "vědět o něčem" },
-                    { word: "vyznání", hint: "přiznání" },
-                    { word: "vyzvat", hint: "vzít na výzvu" },
-                    { word: "výzva", hint: "výzva k něčemu" }
+                    { word: "vy" },
+                    { word: "vysoký" },
+                    { word: "výt" },
+                    { word: "vyskat" },
+                    { word: "zvykat" },
+                    { word: "žvykat" },
+                    { word: "vydra" },
+                    { word: "výr" },
+                    { word: "vyžle" },
+                    { word: "povyk" },
+                    { word: "výheň" }
                 ]
             },
             Z: {
                 title: "Skupina Z",
                 words: [
-                    { word: "zvyk", hint: "naučený způsob chování" },
-                    { word: "zvykat", hint: "učit na něco zvykat" },
-                    { word: "zvyklý", hint: "zvyklý na něco" },
-                    { word: "zvykle", hint: "obvykle" },
-                    { word: "zvyklost", hint: "zvyk" },
-                    { word: "zvyklosti", hint: "množné číslo" },
-                    { word: "obvyklý", hint: "běžný" },
-                    { word: "obvykle", hint: "běžně" },
-                    { word: "neobvyklý", hint: "neobvyklý" },
-                    { word: "zvykový", hint: "týkající se zvyku" },
-                    { word: "zvyknout", hint: "naučit se na něco" },
-                    { word: "zvyk", hint: "obvyklá činnost" },
-                    { word: "brzý", hint: "brzy, časně" },
-                    { word: "brzy", hint: "v časnou dobu" },
-                    { word: "brzyčka", hint: " velmi brzy" },
-                    { word: "nejbrzy", hint: "superlativ" },
-                    { word: "brzlík", hint: "člověk, který brzy" }
+                    { word: "brzy" },
+                    { word: "jazyk" },
+                    { word: "nazývat" },
+                    { word: "Ruzyně" }
                 ]
             }
         };
@@ -673,33 +602,33 @@
         const mnemonics = [
             {
                 group: "B",
-                title: "BÝT a příbuzná slova",
-                text: "\"Byl jednou jeden bydlák, který měl obyčejnou bylinku.\"",
-                explanation: "Tato věta obsahuje základní vyjmenovaná slova skupiny B."
+                title: "Skupina B",
+                text: "\"Být, bydlit, obyvatel - všechna s Y se píší, pamatuj si to, příteli!\"",
+                explanation: "Tato skupina obsahuje slova odvozená od BÝT a slova jako BYDLIT, OBYVATEL."
             },
             {
                 group: "L",
-                title: "Lyže a lyžování",
-                text: "\"Lyžař na lyžích lyžoval po lyžařském svahu.\"",
-                explanation: "Všechna slova se LYŽ- píší s Y."
+                title: "Skupina L",
+                text: "\"Slyšet, lyže, lýtko - všechna s Y, to je jisté!\"",
+                explanation: "LYŽE, LYTKO, SLYŠET a další slova této skupiny se píší s Y."
             },
             {
                 group: "S",
-                title: "Sýr a sýkora",
-                text: "\"Sýkora snědla sýr.\"",
-                explanation: "Obě slova začínají na SÝ- a píšou se s Y."
+                title: "Skupina S",
+                text: "\"Syn, sýr, sýkora - s Y po S, ne s I!\"",
+                explanation: "SYN, SÝR, SÝKORA jsou klíčová slova skupiny S."
             },
             {
                 group: "V",
-                title: "Vysoký",
-                text: "\"Vysoký vynálezce vynesl vynikající vynález.\"",
-                explanation: "Všechna slova s VYS- nebo VYN- se píší s Y."
+                title: "Skupina V",
+                text: "\"Vysoký, výt, vy - Y po V si zapamatuj!\"",
+                explanation: "VYSOKÝ, VÝT, VY jsou základní slova skupiny V."
             },
             {
                 group: "Z",
-                title: "Zvyk a brzy",
-                text: "\"Zvyk je železná košile - brzy si na něj zvykneš.\"",
-                explanation: "ZVYK a BRZY jsou klíčová slova skupiny Z."
+                title: "Skupina Z",
+                text: "\"Brzy, jazyk, Ruzyně - jen čtyři slova v Z-skupině!\"",
+                explanation: "Skupina Z má pouze 4 vyjmenovaná slova: BRZY, JAZYK, NAZÝVAT, RUZYNĚ."
             }
         ];
         
@@ -739,9 +668,8 @@
                         </div>
                         <div class="word-grid">
                             ${data.words.map(w => `
-                                <div class="word-item" onclick="showWordDetail('${w.word}', '${w.hint}')">
+                                <div class="word-item">
                                     <span class="word-highlight">${w.word}</span>
-                                    <span class="word-hint">${w.hint}</span>
                                 </div>
                             `).join('')}
                         </div>
@@ -750,11 +678,6 @@
             }
             
             container.innerHTML = html;
-        }
-        
-        // Detail slova
-        function showWordDetail(word, hint) {
-            alert(`${word}\n\nVýznam: ${hint}`);
         }
         
         // Paměťové triky
@@ -813,19 +736,12 @@
             // Zamíchání a výběr 10 otázek
             pool = pool.sort(() => Math.random() - 0.5).slice(0, 10);
             
-            return pool.map(word => {
-                // Určení, zda se ptáme na Y/I
-                const correctAnswer = 'y';
-                const wrongAnswer = 'i';
-                
-                return {
-                    word: word.word,
-                    hint: word.hint,
-                    group: word.group,
-                    correct: correctAnswer,
-                    options: [correctAnswer, wrongAnswer].sort(() => Math.random() - 0.5)
-                };
-            });
+            return pool.map(word => ({
+                word: word.word,
+                group: word.group,
+                correct: 'y',
+                options: ['y', 'i'].sort(() => Math.random() - 0.5)
+            }));
         }
         
         // Vykreslení otázky
@@ -851,16 +767,15 @@
                         <div class="stat-label">Správně</div>
                     </div>
                     <div class="stat total">
-                        <div class="stat-value">${currentQuestion}/${questions.length}</div>
+                        <div class="stat-value">${currentQuestion + 1}/${questions.length}</div>
                         <div class="stat-label">Otázka</div>
                     </div>
                 </div>
                 
                 <div class="question-card">
-                    <div class="question-number">Otázka ${currentQuestion + 1} z ${questions.length}</div>
+                    <div class="question-number">Otázka ${currentQuestion + 1} z ${questions.length} (skupina ${q.group})</div>
                     <div class="question-word">${q.word.replace(/y/gi, '_')}</div>
-                    <div class="question-text">Doplň písmeno Y nebo I (skupina ${q.group})</div>
-                    <div class="question-text" style="font-size: 0.9em; color: #888;">${q.hint}</div>
+                    <div class="question-text">Doplň písmeno Y nebo I</div>
                     
                     <div class="answers">
                         ${q.options.map(opt => `
@@ -902,7 +817,7 @@
                 feedback.textContent = `✓ Správně! Slovo "${q.word}" se píše s Y.`;
             } else {
                 feedback.className = 'feedback incorrect';
-                feedback.textContent = `✗ Špatně. Správná odpověď je Y. Slovo "${q.word}" patří do vyjmenovaných slov skupiny ${q.group}.`;
+                feedback.textContent = `✗ Špatně. Správná odpověď je Y. Slovo "${q.word}" je vyjmenované.`;
             }
             
             document.getElementById('nextBtn').disabled = false;
@@ -940,11 +855,11 @@
                     <div class="stats" style="margin: 30px 0;">
                         <div class="stat correct">
                             <div class="stat-value">${score}</div>
-                            <div class="stat-label">Správné odpovědi</div>
+                            <div class="stat-label">Správné</div>
                         </div>
                         <div class="stat incorrect">
                             <div class="stat-value">${questions.length - score}</div>
-                            <div class="stat-label">Špatné odpovědi</div>
+                            <div class="stat-label">Špatné</div>
                         </div>
                     </div>
                     
@@ -953,7 +868,7 @@
             `;
         }
         
-        // Inicializace při načtení
+        // Inicializace
         init();
     </script>
 </body>
