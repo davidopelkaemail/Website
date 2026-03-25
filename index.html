@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇨🇿 Výjmenovaná Slova - Super Učení!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #4a4a4a;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 span {
+            color: #e74c3c;
+        }
+
+        .trophy {
+            font-size: 3em;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Score Display */
+        .score-display {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .score-display h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .score-value {
+            font-size: 3em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Car Garage */
+        .garage {
+            background: linear-gradient(135deg, #2c3e50 0%, #1a1a2e 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .garage h2 {
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .cars-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .car-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            min-width: 140px;
+        }
+
+        .car-item.locked {
+            background: rgba(255,255,255,0.1);
+            opacity: 0.4;
+        }
+
+        .car-item.unlocked {
+            background: rgba(255,215,0,0.2);
+            box-shadow: 0 0 20px rgba(255,215,0,0.5);
+        }
+
+        .car-item.current {
+            background: rgba(46,204,113,0.3);
+            box-shadow: 0 0 25px rgba(46,204,113,0.6);
+            transform: scale(1.1);
+        }
+
+        .car-item img {
+            width: 120px;
+            height: 70px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .car-item .car-name {
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .car-item .car-points {
+            color: #ffd700;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+
+        /* Letter Selection */
+        .letter-selection {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .letter-selection h2 {
+            text-align: center;
+            color: #4a4a4a;
+            margin-bottom: 20px;
+        }
+
+        .letters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .letter-btn {
+            font-size: 2em;
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .letter-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .letter-btn.selected {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(17,153,142,0.4);
+        }
+
+        .letter-btn:not(.selected) {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #4a4a4a;
+        }
+
+        /* Test Selection */
+        .test-selection {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .test-selection.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .test-btn {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 15px auto;
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .test-btn:hover {
+            transform: translateX(10px);
+        }
+
+        .test-btn.test1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .test-btn.test2 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .test-btn.test3 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .test-btn.test4 {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+
+        /* Test Area */
+        .test-area {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .test-area.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        .question {
+            font-size: 1.8em;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #4a4a4a;
+        }
+
+        .question .highlight {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 1.2em;
+            padding: 5px 15px;
+            background: #ffebee;
+            border-radius: 10px;
+            display: inline-block;
+            min-width: 60px;
+        }
+
+        .input-answer {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .input-answer input {
+            font-size: 2em;
+            width: 80px;
+            text-align: center;
+            padding: 10px;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .input-answer input:focus {
+            border-color: #e74c3c;
+            box-shadow: 0 0 15px rgba(231,76,60,0.3);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+
+        .option-btn {
+            padding: 20px;
+            font-size: 1.3em;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover {
+            background: #f5f7fa;
+            transform: scale(1.05);
+        }
+
+        .option-btn.correct {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border-color: #38ef7d;
+        }
+
+        .option-btn.wrong {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border-color: #e74c3c;
+        }
+
+        .check-btn {
+            display: block;
+            margin: 0 auto;
+            padding: 15px 50px;
+            font-size: 1.3em;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .check-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(17,153,142,0.4);
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        /* Results */
+        .results {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        .results h2 {
+            font-size: 2em;
+            color: #4a4a4a;
+            margin-bottom: 20px;
+        }
+
+        .results .score {
+            font-size: 4em;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .results .points-earned {
+            font-size: 1.5em;
+            color: #27ae60;
+            margin: 20px 0;
+        }
+
+        .play-again-btn {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .play-again-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Word List */
+        .word-list {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .word-list.active {
+            display: block;
+        }
+
+        .word-list h3 {
+            text-align: center;
+            color: #4a4a4a;
+            margin-bottom: 15px;
+        }
+
+        .words-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .word-tag {
+            padding: 8px 15px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 20px;
+            font-size: 1em;
+            color: #4a4a4a;
+        }
+
+        /* Animations */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f00;
+            animation: confetti-fall 3s linear;
+            pointer-events: none;
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            .car-item img {
+                width: 80px;
+                height: 50px;
+            }
+            .letters-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Back button */
+        .back-btn {
+            padding: 10px 25px;
+            font-size: 1em;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #4a4a4a;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateX(-5px);
+        }
+
+        /* Hint */
+        .hint {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        .car-unlocked-msg {
+            text-align: center;
+            font-size: 1.5em;
+            color: #ffd700;
+            margin-top: 20px;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="trophy">🏆</div>
+            <h1>Výjmenovaná <span>Slova</span></h1>
+            <p style="color: #666; font-size: 1.1em;">Super interaktivní učení pro děti! 🎮</p>
+        </div>
+
+        <!-- Score Display -->
+        <div class="score-display">
+            <h2>⭐ Tvoje Skóre ⭐</h2>
+            <div class="score-value" id="totalScore">0</div>
+            <p>Body</p>
+        </div>
+
+        <!-- Car Garage -->
+        <div class="garage">
+            <h2>🚗 Tvá Auta - Garáž 🚗</h2>
+            <div class="cars-container" id="carsContainer">
+                <!-- Cars will be generated by JS -->
+            </div>
+        </div>
+
+        <!-- Letter Selection -->
+        <div class="letter-selection" id="letterSelection">
+            <h2>📝 Vyber si písmenko, které chceš procvičit:</h2>
+            <div class="letters-grid" id="lettersGrid">
+                <!-- Letters will be generated by JS -->
+            </div>
+        </div>
+
+        <!-- Selected Words Preview -->
+        <div class="word-list" id="wordList">
+            <h3>📖 Slova k procvičení:</h3>
+            <div class="words-container" id="wordsContainer">
+                <!-- Words will be shown here -->
+            </div>
+        </div>
+
+        <!-- Test Selection -->
+        <div class="test-selection" id="testSelection">
+            <button class="back-btn" onclick="goBackToLetters()">⬅️ Zpět na výběr</button>
+            <h2 style="text-align: center; margin-bottom: 20px; color: #4a4a4a;">🎮 Vyber si test:</h2>
+            
+            <button class="test-btn test1" onclick="startTest(1)">
+                📝 Doplňování písmen
+            </button>
+            <p class="hint">Doplň chybějící i/y ve slovech</p>
+            
+            <button class="test-btn test2" onclick="startTest(2)">
+                🎯 Výběr správné odpovědi
+            </button>
+            <p class="hint">Vyber správné slovo s i/y</p>
+            
+            <button class="test-btn test3" onclick="startTest(3)">
+                🔤 Najdi chybu
+            </button>
+            <p class="hint">Najdi slovo s chybným písmenem</p>
+            
+            <button class="test-btn test4" onclick="startTest(4)">
+                🏃 Rychlý test
+            </button>
+            <p class="hint">Odpovídej rychle, čas je omezen!</p>
+        </div>
+
+        <!-- Test Area -->
+        <div class="test-area" id="testArea">
+            <button class="back-btn" onclick="goBackToTests()">⬅️ Zpět na testy</button>
+            
+            <div class="progress-text" id="progressText">Otázka 1 z 10</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            
+            <div class="question" id="question">
+                <!-- Question will be shown here -->
+            </div>
+            
+            <div class="options-grid" id="optionsGrid">
+                <!-- Options will be generated -->
+            </div>
+            
+            <div class="input-answer" id="inputArea" style="display: none;">
+                <input type="text" id="answerInput" maxlength="1" placeholder="?" autocomplete="off">
+                <button class="check-btn" onclick="checkInputAnswer()">✓ Zkontrolovat</button>
+            </div>
+            
+            <button class="check-btn" id="nextBtn" style="display: none;" onclick="nextQuestion()">
+                Další ➡️
+            </button>
+        </div>
+
+        <!-- Results -->
+        <div class="results" id="results">
+            <h2>🎉 Výborně! 🎉</h2>
+            <div class="score" id="resultScore">10/10</div>
+            <div class="points-earned" id="pointsEarned">+50 bodů!</div>
+            <div class="car-unlocked-msg" id="carUnlockedMsg" style="display: none;">
+                🚗 Odemkl jsi nové auto! 🚗
+            </div>
+            <button class="play-again-btn" onclick="goBackToTests()">🔄 Hrát znovu</button>
+        </div>
+    </div>
+
+    <script>
+        // Vyjmenovaná slova podle písmen
+        const vyjmenovanaSlova = {
+            'B': ['být', 'byl', 'byla', 'byli', 'byly', 'byl', 'být', 'aby', 'abych', 'abys', 'aby', 'abychom', 'abyste', 'aby', 'zbyl', 'zbyly', 'zbyla', 'zbyli', 'obývat', 'obývají', 'obýval', 'obyčejný', 'obyčejně', 'obychod', 'bydlit', 'bydliště', 'obyvatel', 'obyvatelstvo'],
+            'L': ['léto', 'létající', 'léta', 'letní', 'letadlo', 'letectvo', 'letadlo', 'letiště', 'letoun', 'vyletěl', 'vyletěla', 'vyletěli', 'vyletěly', 'přiletět', 'odletět', 'letět', 'let', 'léty', 'létní'],
+            'M': ['mýt', 'mýtit', 'mýtit se', 'mytí', 'umýt', 'umýt se', 'pomýt', 'pomýt se', 'smýt', 'smýt se', 'mycí', 'mytina', 'mýdlo', 'mýtit', 'zamykat', 'zamykat se', 'zámek', 'zámky', 'zámek', 'zamykání'],
+            'P': ['pýchat se', 'pýchy', 'pýcha', 'pych', 'pýr', 'pýří', 'pýřit se', 'pytel', 'pytlik', 'pytlík', 'pytlák', 'pytlákem', 'napyl', 'napýt', 'pýt', 'opyt', 'opyly', 'opyla', 'opyli', 'opyly', 'pýtlíkovat'],
+            'S': ['sýr', 'sýrový', 'sýra', 'sýrovitý', 'sýrovina', 'syrovátka', 'sýrové', 'sýrárna', 'sýrář', 'sýrovitost', 'sytý', 'sytný', 'sytnost', 'sytost', 'nasycený', 'nasycení', 'sytit', 'sytit se'],
+            'V': ['výt', 'výt', 'vyli', 'vyla', 'vyli', 'vyly', 'výt', 'vytí', 'zavýt', 'vyt', 'vyje', 'vyjí', 'vyla', 'vyla', 'vyli', 'vyly', 'vysoký', 'vysoko', 'výš', 'výše', 'výška', 'vyšší', 'výškový', 'vyšetřit', 'vyšetření', 'vyšetřování'],
+            'Z': ['zítřek', 'zítra', 'zítřejší', 'zítra', 'zítřkem', 'zítřejší', 'zítrat', 'zítrata', 'zitr', 'zima', 'zimní', 'zimník', 'zimnice', 'zimovat', 'zimoviště', 'zimy', 'zimní', 'zima']
+        };
+
+        // Car rewards with realistic images
+        const cars = [
+            { name: '🚲 Kolo', points: 0, img: 'https://images.unsplash.com/photo-1532298229144-0ec4c2b1ea4a?w=200&h=100&fit=crop' },
+            { name: '🛴 Koloběžka', points: 50, img: 'https://images.unsplash.com/photo-1590846725306-3f5f8a6c5c8d?w=200&h=100&fit=crop' },
+            { name: '🏍️ Skútr', points: 100, img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=100&fit=crop' },
+            { name: '🚗 Fiat 500', points: 200, img: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=200&h=100&fit=crop' },
+            { name: '🚙 Volkswagen Golf', points: 350, img: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=200&h=100&fit=crop' },
+            { name: '🚘 BMW 3 Series', points: 500, img: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=200&h=100&fit=crop' },
+            { name: '🏎️ Mercedes AMG', points: 700, img: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=200&h=100&fit=crop' },
+            { name: '💎 Porsche 911', points: 900, img: 'https://images.unsplash.com/photo-1503376480272-3c64d2e8e4d8?w=200&h=100&fit=crop' },
+            { name: '👑 Ferrari', points: 1200, img: 'https://images.unsplash.com/photo-1592198084033-aade902d1aae?w=200&h=100&fit=crop' },
+            { name: '🌟 LAMBORGHINI', points: 1500, img: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=200&h=100&fit=crop' }
+        ];
+
+        // State
+        let selectedLetter = null;
+        let currentTest = 0;
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let totalQuestions = 10;
+        let score = parseInt(localStorage.getItem('vsScore') || '0');
+        let unlockedCars = JSON.parse(localStorage.getItem('vsCars') || '[]');
+
+        // Initialize
+        function init() {
+            updateScoreDisplay();
+            renderLetters();
+            renderCars();
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('totalScore').textContent = score;
+        }
+
+        function renderLetters() {
+            const grid = document.getElementById('lettersGrid');
+            grid.innerHTML = '';
+            Object.keys(vyjmenovanaSlova).forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = 'letter-btn';
+                btn.textContent = letter;
+                btn.onclick = () => selectLetter(letter);
+                grid.appendChild(btn);
+            });
+        }
+
+        function renderCars() {
+            const container = document.getElementById('carsContainer');
+            container.innerHTML = '';
+            
+            cars.forEach((car, index) => {
+                const isUnlocked = score >= car.points || unlockedCars.includes(index);
+                const isCurrent = !isUnlocked && (index === 0 || score >= cars[index-1].points);
+                
+                const div = document.createElement('div');
+                div.className = `car-item ${isUnlocked ? 'unlocked' : (isCurrent ? 'current' : 'locked')}`;
+                div.innerHTML = `
+                    <img src="${car.img}" alt="${car.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 100%22><rect fill=%22%23333%22 width=%22200%22 height=%22100%22/><text x=%22100%22 y=%2255%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2220%22>${car.name}</text></svg>'">
+                    <div class="car-name">${car.name}</div>
+                    <div class="car-points">${car.points} bodů</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function selectLetter(letter) {
+            selectedLetter = letter;
+            
+            // Update button styles
+            document.querySelectorAll('.letter-btn').forEach(btn => {
+                btn.classList.toggle('selected', btn.textContent === letter);
+            });
+            
+            // Show word list
+            const wordList = document.getElementById('wordList');
+            const wordsContainer = document.getElementById('wordsContainer');
+            wordsContainer.innerHTML = vyjmenovanaSlova[letter]
+                .slice(0, 20)
+                .map(word => `<span class="word-tag">${word}</span>`)
+                .join('');
+            wordList.classList.add('active');
+            
+            // Show test selection
+            document.getElementById('testSelection').classList.add('active');
+            document.getElementById('testArea').classList.remove('active');
+            document.getElementById('results').classList.remove('active');
+        }
+
+        function goBackToLetters() {
+            selectedLetter = null;
+            document.querySelectorAll('.letter-btn').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById('wordList').classList.remove('active');
+            document.getElementById('testSelection').classList.remove('active');
+        }
+
+        function goBackToTests() {
+            document.getElementById('testArea').classList.remove('active');
+            document.getElementById('results').classList.remove('active');
+            document.getElementById('testSelection').classList.add('active');
+        }
+
+        function startTest(testType) {
+            currentTest = testType;
+            currentQuestion = 0;
+            correctAnswers = 0;
+            
+            document.getElementById('testSelection').classList.remove('active');
+            document.getElementById('testArea').classList.add('active');
+            document.getElementById('results').classList.remove('active');
+            
+            nextQuestion();
+        }
+
+        function generateQuestion() {
+            const words = vyjmenovanaSlova[selectedLetter];
+            const word = words[Math.floor(Math.random() * words.length)];
+            
+            const questionTypes = {
+                1: generateFillBlank,
+                2: generateMultipleChoice,
+                3: generateFindError,
+                4: generateSpeedTest
+            };
+            
+            return questionTypes[currentTest](word);
+        }
+
+        function generateFillBlank(word) {
+            const letter = selectedLetter.toLowerCase();
+            const displayWord = word.replace(new RegExp(letter, 'g'), '_');
+            
+            document.getElementById('question').innerHTML = `
+                Doplň chybějící písmeno: <br><br>
+                <span class="highlight">${displayWord}</span>
+            `;
+            
+            document.getElementById('optionsGrid').style.display = 'none';
+            document.getElementById('inputArea').style.display = 'flex';
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').focus();
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            return { correct: letter === 'y' ? 'y' : letter };
+        }
+
+        function generateMultipleChoice(word) {
+            const letter = selectedLetter.toLowerCase();
+            const correctAnswer = letter === 'y' ? 'y' : letter;
+            const wrongAnswer = correctAnswer === 'y' ? 'i' : 'y';
+            
+            // Create variations
+            const correctWord = word;
+            const wrongWord = word.replace(new RegExp(correctAnswer, 'g'), wrongAnswer);
+            
+            document.getElementById('question').innerHTML = `
+                Které slovo je napsáno správně?
+            `;
+            
+            const options = [
+                { text: correctWord, correct: true },
+                { text: wrongWord, correct: false }
+            ].sort(() => Math.random() - 0.5);
+            
+            const grid = document.getElementById('optionsGrid');
+            grid.innerHTML = '';
+            grid.style.display = 'grid';
+            document.getElementById('inputArea').style.display = 'none';
+            
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt.text;
+                btn.onclick = () => selectOption(btn, opt.correct);
+                grid.appendChild(btn);
+            });
+            
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            return { correct: correctWord };
+        }
+
+        function generateFindError(word) {
+            const letter = selectedLetter.toLowerCase();
+            const correctAnswer = letter === 'y' ? 'y' : letter;
+            const wrongAnswer = correctAnswer === 'y' ? 'i' : 'y';
+            
+            // Create a wrong word
+            const wrongWord = word.replace(new RegExp(correctAnswer, 'g'), wrongAnswer);
+            
+            const words = vyjmenovanaSlova[selectedLetter];
+            const otherWords = words.filter(w => w !== word).slice(0, 3);
+            const correctWord = otherWords[Math.floor(Math.random() * otherWords.length)] || word;
+            
+            document.getElementById('question').innerHTML = `
+                Najdi slovo s chybou:
+            `;
+            
+            const allOptions = [
+                { text: wrongWord, correct: true, hasError: true },
+                { text: word, correct: false },
+                { text: correctWord, correct: false },
+                { text: otherWords[1] || word, correct: false }
+            ].filter((opt, i, arr) => arr.findIndex(o => o.text === opt.text) === i).slice(0, 4);
+            
+            const grid = document.getElementById('optionsGrid');
+            grid.innerHTML = '';
+            grid.style.display = 'grid';
+            document.getElementById('inputArea').style.display = 'none';
+            
+            allOptions.sort(() => Math.random() - 0.5).forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt.text;
+                btn.onclick = () => selectOption(btn, opt.correct);
+                grid.appendChild(btn);
+            });
+            
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            return { correct: wrongWord };
+        }
+
+        function generateSpeedTest(word) {
+            // Same as multiple choice but with timer
+            return generateMultipleChoice(word);
+        }
+
+        function selectOption(btn, correct) {
+            const allBtns = document.querySelectorAll('.option-btn');
+            
+            if (correct) {
+                btn.classList.add('correct');
+                correctAnswers++;
+            } else {
+                btn.classList.add('wrong');
+                allBtns.forEach(b => {
+                    if (b.textContent === vyjmenovanaSlova[selectedLetter].find(w => 
+                        w.includes(selectedLetter.toLowerCase()) || w.includes(selectedLetter.toLowerCase() === 'y' ? 'i' : 'y')
+                    )) {
+                        b.classList.add('correct');
+                    }
+                });
+            }
+            
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < totalQuestions) {
+                    nextQuestion();
+                } else {
+                    showResults();
+                }
+            }, 1000);
+        }
+
+        function checkInputAnswer() {
+            const input = document.getElementById('answerInput');
+            const letter = selectedLetter.toLowerCase();
+            const correctAnswer = letter === 'y' ? 'y' : letter;
+            
+            if (input.value.toLowerCase() === correctAnswer) {
+                correctAnswers++;
+                input.style.borderColor = '#27ae60';
+            } else {
+                input.style.borderColor = '#e74c3c';
+            }
+            
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < totalQuestions) {
+                document.getElementById('progressText').textContent = `Otázka ${currentQuestion + 1} z ${totalQuestions}`;
+                document.getElementById('progressFill').style.width = `${(currentQuestion / totalQuestions) * 100}%`;
+                
+                generateQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('testArea').classList.remove('active');
+            document.getElementById('results').classList.add('active');
+            
+            document.getElementById('resultScore').textContent = `${correctAnswers}/${totalQuestions}`;
+            
+            const pointsEarned = correctAnswers * 5;
+            score += pointsEarned;
+            localStorage.setItem('vsScore', score.toString());
+            updateScoreDisplay();
+            
+            document.getElementById('pointsEarned').textContent = `+${pointsEarned} bodů!`;
+            
+            // Check for new car unlock
+            let newCarUnlocked = false;
+            cars.forEach((car, index) => {
+                if (score >= car.points && !unlockedCars.includes(index)) {
+                    unlockedCars.push(index);
+                    newCarUnlocked = true;
+                }
+            });
+            localStorage.setItem('vsCars', JSON.stringify(unlockedCars));
+            
+            if (newCarUnlocked) {
+                document.getElementById('carUnlockedMsg').style.display = 'block';
+                createConfetti();
+            } else {
+                document.getElementById('carUnlockedMsg').style.display = 'none';
+            }
+            
+            renderCars();
+        }
+
+        function createConfetti() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 50);
+            }
+        }
+
+        // Keyboard support for input
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && document.getElementById('inputArea').style.display !== 'none') {
+                checkInputAnswer();
+            }
+        });
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
